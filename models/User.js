@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema({
   name: {
     type: String,
-    maxlength: 50,
+    maxlength: 150,
   },
   email: {
     type: String,
@@ -18,7 +19,7 @@ const userSchema = mongoose.Schema({
   },
   lastname: {
     type: String,
-    maxlength: 50,
+    maxlength: 150,
   },
   role: {
     type: Number,
@@ -54,6 +55,29 @@ userSchema.pre("save", function (next) {
     next();
   }
 });
+
+userSchema.methods.comparePassword = function (plainPassword, cb) {
+  // plainPassword : 123456 / 암호화된 비번 : #!@#1241@$1~!asd
+  //plainPassword 암호화 해서 비교한다
+  bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
+    if (err) return cb(err);
+    cb(null, isMatch);
+  });
+};
+
+userSchema.methods.generateToken = function (cb) {
+  var user = this;
+  //jsonwebToken을 이용하여 토큰 생성 user._id는 mongo id
+  // user._id + 'secretToken' = token
+  //jwt.sign(payload, secretKey)이 기대값
+  //user_.id는 문자열이 아니기 때문에 .toHexString으로 24바이트 16진수 문자열로 바꿔줌?
+  var token = jwt.sign(user._id.toHexString(), "secretToken");
+  user.token = token;
+  user.save(function (err, user) {
+    if (err) return cb(err);
+    cb(null, user);
+  });
+};
 
 const User = mongoose.model("User", userSchema);
 
