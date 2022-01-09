@@ -3,6 +3,9 @@ const express = require("express");
 const app = express();
 const port = 5000;
 const bodyParser = require("body-parser");
+
+const config = require("./config/key");
+
 const { User } = require("./models/User");
 
 //서버에서 가져온 데이터를 파싱해서 가져와준다.
@@ -12,15 +15,12 @@ app.use(bodyParser.json());
 
 const mongoose = require("mongoose");
 mongoose
-  .connect(
-    "mongodb+srv://dbsgur:djatnr24@utubeclone.ig1r5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      //useCreateIndex: true,
-      //useFindAndModify: false,
-    }
-  )
+  .connect(config.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    //useCreateIndex: true,
+    //useFindAndModify: false,
+  })
   .then(() => console.log("MongoDB Connected ... "))
   .catch((err) => console.log(err));
 
