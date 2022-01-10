@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const config = require("./config/key");
 
+const { auth } = require("./middleware/auth");
 const { User } = require("./models/User");
 
 //서버에서 가져온 데이터를 파싱해서 가져와준다.
@@ -40,7 +41,7 @@ app.post("/register", (req, res) => {
   });
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
   //1. 요청된 이메일이 데이터베이스에 있는 지 찾는다.
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -67,6 +68,23 @@ app.post("/login", (req, res) => {
           .json({ loginSuccess: true, userId: user._id });
       });
     });
+  });
+});
+
+//Authentication 자격 (관리자화면, 비회원화면)
+//auth는 미들웨어
+app.get("/api/users/auth", auth, (req, res) => {
+  //여기까지 오면 미들웨어를 통과했다는 거임
+  //그렇다면 Auth가 True라는 뜻
+  res.status(200).json({
+    _id: req.user._id,
+    // 0> 일반 유저 ^ 나머지 관리자
+    isAdmin: req.user.role === 0 ? false : true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
