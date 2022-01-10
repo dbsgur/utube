@@ -81,6 +81,7 @@ app.get("/api/users/auth", auth, (req, res) => {
     _id: req.user._id,
     // 0> 일반 유저 ^ 나머지 관리자
     isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
     email: req.user.email,
     name: req.user.name,
     lastname: req.user.lastname,
