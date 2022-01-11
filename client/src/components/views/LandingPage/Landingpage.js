@@ -17,11 +17,9 @@ function Landingpage() {
   return (
     <div
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
+        padding: 24,
+        minHeight: 380,
+        backgroundColor: "#fff",
       }}
     >
       <h1>Landingpage</h1>
