@@ -25,12 +25,11 @@ mongoose
   .then(() => console.log("MongoDB Connected ... "))
   .catch((err) => console.log(err));
 
-app.get("/api/hello", (req, res) => res.send("hellooo"));
-
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+//회원가입
 app.post("/api/users/register", (req, res) => {
   const user = new User(req.body);
 
@@ -42,6 +41,7 @@ app.post("/api/users/register", (req, res) => {
   });
 });
 
+//로그인
 app.post("/api/users/login", (req, res) => {
   //1. 요청된 이메일이 데이터베이스에 있는 지 찾는다.
   User.findOne({ email: req.body.email }, (err, user) => {
