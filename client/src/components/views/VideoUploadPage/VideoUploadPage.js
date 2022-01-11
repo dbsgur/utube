@@ -1,109 +1,173 @@
 import React, { useState } from "react";
-import { Typography, Button, Form, message, Input, icon } from "antd";
+import { Form, Select, Radio, Button, Upload, Input } from "antd";
 import Dropzone from "react-dropzone";
+import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 
-const { Title } = Typography;
-const { TextArea } = Input;
+const { Option } = Select;
+const formItemLayout = {
+  labelCol: {
+    span: 6,
+  },
+  wrapperCol: {
+    span: 14,
+  },
+};
+
+const normFile = (e) => {
+  console.log("Upload event:", e);
+
+  if (Array.isArray(e)) {
+    return e;
+  }
+
+  return e && e.fileList;
+};
+
+// const { Title } = Typography;
+// const { TextArea } = Input;
 
 function VideoUploadPage() {
-  const kindsOptions = [
-    { value: 0, label: "Private" },
-    { value: 1, label: "Public" },
-  ];
-  const categoryOptions = [
-    { value: 0, label: "Film & Animation" },
-    { value: 1, label: "Auto & Vechicles" },
-    { value: 2, label: "Music" },
-    { value: 3, label: "Pets & Animals" },
-  ];
-  const [videoTitle, setVideoTitle] = useState("");
-  const videoTitleHandler = (e) => {
-    setVideoTitle(e.target.value);
-  };
-  const [description, setDescription] = useState("");
-  const descriptionHandler = (e) => {
-    setDescription(e.target.value);
-  };
-  const [kinds, setKinds] = useState(0);
-  const kindsHandler = (e) => {
-    setKinds(e.target.value);
-  };
-  const [category, setCategory] = useState("Flim in animation");
-  const categoryHandler = (e) => {
-    setCategory(e.target.value);
-    // console.log("category:", category);
-    // console.log("e.target.value : ", e.target.value);
+  const onFinish = (values) => {
+    console.log("Received values of form: ", values);
   };
   return (
     <div
       style={{
-        maxWidth: "700px",
-        margin: "2rem auto",
+        maxWidth: "800px",
+        margin: "auto",
         backgroundColor: "white",
         padding: "0 10px",
       }}
     >
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+      {/* <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <Title level={2}>Upload</Title>
-      </div>
+      </div> */}
 
-      <Form onSubmit>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          {/* Drop Down */}
-          <Dropzone onDrop multiple maxSize>
-            {({ getRootProps, getInputProps }) => (
-              <div
-                style={{
-                  width: "300px",
-                  height: "240px",
-                  border: "1px solid lightgray",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                <h1>+</h1>
-                {/* <icon type="plus" style={{ fontSize: "3rem" }} /> */}
-              </div>
-            )}
-          </Dropzone>
+      <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
+        <Form.Item
+          name={["user", "Title"]}
+          label="Title"
+          rules={[
+            {
+              required: true,
+              message: "Please select your video's title!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={["user", "Description"]}
+          label="Description"
+          rules={[
+            {
+              required: true,
+              message: "Please select your video's description!",
+            },
+          ]}
+        >
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item
+          name="select"
+          label="Select"
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: "Please select your country!",
+            },
+          ]}
+        >
+          <Select placeholder="Please select a country">
+            <Option value="china">China</Option>
+            <Option value="usa">U.S.A</Option>
+          </Select>
+        </Form.Item>
 
-          {/* 썸네일 */}
-          <div>
-            <img src alt />
-          </div>
-        </div>
-        <br />
-        <br />
-        <label>Title</label>
-        <Input onChange={videoTitleHandler} value={videoTitle} />
-        <br />
-        <br />
-        <label>Description</label>
-        <TextArea onChange={descriptionHandler} value={description} />
-        <br />
-        <br />
-        <select onChagne={kindsHandler}>
-          {kindsOptions.map((item, index) => (
-            <option key={index} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        <Form.Item
+          name="categories"
+          label="CATEGORY"
+          rules={[
+            {
+              required: true,
+              message: "Please select your video categories!!",
+              type: "array",
+            },
+          ]}
+        >
+          <Select
+            mode="multiple"
+            placeholder="Please select your video categories"
+          >
+            <Option value="flim">Film & Animation</Option>
+            <Option value="auto">Auto & Vechicles</Option>
+            <Option value="music">Music</Option>
+            <Option value="pet">Pets & Animals</Option>
+            <Option value="education">Education</Option>
+          </Select>
+        </Form.Item>
 
-        <select onChagne={categoryHandler}>
-          {categoryOptions.map((item, index) => (
-            <option key={index} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        {/* Publci & Private */}
+        <Form.Item
+          name="secure"
+          label="SECURE"
+          rules={[
+            {
+              required: true,
+              message: "Please pick an item!",
+            },
+          ]}
+        >
+          <Radio.Group>
+            <Radio.Button value="private">Private</Radio.Button>
+            <Radio.Button value="public">Public</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
 
-        <Button type="primary" size="large">
-          Submit
-        </Button>
+        {/* <Form.Item
+        name="upload"
+        label="Upload"
+        valuePropName="fileList"
+        getValueFromEvent={normFile}
+        extra="ㅁㄹㄹ"
+      >
+        <Upload name="logo" action="/upload.do" listType="picture">
+          <Button icon={<UploadOutlined />}>Click to upload</Button>
+        </Upload>
+      </Form.Item> */}
+
+        <Form.Item label="Dragger">
+          <Form.Item
+            name="dragger"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            noStyle
+          >
+            <Upload.Dragger name="files" action="/upload.do">
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Support for a single or bulk upload.
+              </p>
+            </Upload.Dragger>
+          </Form.Item>
+        </Form.Item>
+
+        <Form.Item
+          wrapperCol={{
+            span: 12,
+            offset: 6,
+          }}
+        >
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );
